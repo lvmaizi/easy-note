@@ -5,3 +5,6 @@ notes/2026-07-08.md
 config.yaml
 .DS_Store
 **/__pycache__/**
+build/**
+dist
+EasyNote.spec

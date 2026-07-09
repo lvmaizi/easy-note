@@ -29,6 +29,7 @@ QLineEdit {
     background: #FFFFFF; border: 1px solid #E4DFD4; border-radius: 8px;
     padding: 7px 10px; color: #23211E; font-size: 13.5px;
     selection-background-color: #BfDAD6;
+    min-height: 20px;  min-width: 350px;
 }
 QLineEdit:focus { border: 1px solid #2A6F6B; }
 QPushButton#browse {
