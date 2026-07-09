@@ -8,6 +8,7 @@
 
 产物：
     dist/EasyNote.app          -- 可双击运行的 macOS 应用包
+    dist/EasyNote.dmg          -- 分发用 dmg 包（推荐上传到 Release）
     build/                     -- PyInstaller 中间产物（可删）
     EasyNote.spec              -- 生成的 spec 文件（可删）
 
@@ -18,7 +19,8 @@
 - 图标：优先用 assets/icon.icns；若仅有 icon.png，会用 sips+iconutil 现场生成 .icns
   到 build/。assets 目录一并打入包内供运行时加载窗口图标。
 - 使用 --windowed，生成标准 .app 包（不带终端窗口）。
-- 如需分发，可在生成后用 `hdiutil` 或 `create-dmg` 制作 dmg（见文末注释）。
+- 打包完成后自动生成 dmg 分发包；app 未签名，对方首次打开需执行
+  `xattr -cr /path/to/EasyNote.app`（见 README）。
 """
 
 import subprocess
@@ -62,6 +64,23 @@ def _ensure_icns() -> Path | None:
         check=True, capture_output=True,
     )
     return target
+
+
+def _create_dmg(app_path: Path, out_path: Path) -> None:
+    """用 hdiutil 打 dmg。相比 zip，dmg 保留符号链接与可执行位——PyInstaller
+    .app 内部有大量 symlink，直接 zip 解压后会变成重复文件并可能跑不起来。"""
+    if out_path.exists():
+        out_path.unlink()
+    cmd = [
+        "hdiutil", "create",
+        "-volname", APP_NAME,
+        "-srcfolder", str(app_path),
+        "-ov",
+        "-format", "UDZO",
+        str(out_path),
+    ]
+    print("[dmg] " + " ".join(cmd))
+    subprocess.run(cmd, check=True, capture_output=True)
 
 
 def main() -> None:
@@ -108,11 +127,14 @@ def main() -> None:
 
     app_path = ROOT / "dist" / f"{APP_NAME}.app"
     print("\n打包完成。产物: " + str(app_path))
-    print(
-        "\n如需制作 dmg 分发包，可执行：\n"
-        f'  hdiutil create -volname {APP_NAME} -srcfolder "{app_path}" '
-        f'-ov -format UDZO "{ROOT / "dist" / (APP_NAME + ".dmg")}"'
-    )
+
+    dmg_path = ROOT / "dist" / f"{APP_NAME}.dmg"
+    try:
+        _create_dmg(app_path, dmg_path)
+    except subprocess.CalledProcessError as e:
+        err = e.stderr.decode("utf-8", "ignore") if e.stderr else str(e)
+        sys.exit(f"[警告] DMG 制作失败: {err}")
+    print("DMG 制作完成: " + str(dmg_path))
 
 
 if __name__ == "__main__":
