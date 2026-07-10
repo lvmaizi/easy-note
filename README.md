@@ -17,6 +17,21 @@ Easy Note：✅ 已保存到 2026-07-09 · 「Python 装饰器要点」 #Python 
 Easy Note：你在 7-09 记过装饰器的核心是闭包与 @ 语法糖……（来源：notes/2026-07-09.md）
 ```
 
+
+---
+
+## 🎬 看它怎么用
+
+**① 记笔记 —— 说人话，它替你提炼标题、打标签、按日期归档**
+
+<p align="center"><img src="assets/demo-record.gif" alt="记笔记演示：输入随口一句，自动整理标题与标签并保存到当天的 Markdown" width="720"></p>
+
+**② 查笔记 —— 自然语言提问，检索你的全部笔记并标注出处作答**
+
+<p align="center"><img src="assets/demo-query.gif" alt="查笔记演示：用大白话提问，检索历史笔记并标注来源" width="720"></p>
+
+> 上图为界面演示。真实效果取决于你接入的模型；配置好 API 后即为你在窗口里看到的样子。
+
 ---
 
 ## 💾 下载即用（免装 Python）
